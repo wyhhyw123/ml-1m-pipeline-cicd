@@ -1,0 +1,38 @@
+name: github actions with modelarts demo
+on: [push]
+
+env:
+  REGION_ID: 'cn-north-4'
+
+jobs:
+  connect_to_hwcloud:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # ${{ github.workspace }}为action运行时的工作目录
+      - name: Echo Workspace of Action
+        run: echo ${{ github.workspace }} && echo ${{ secrets.ACCESSKEY }}
+
+      # ${{ runner.temp }}为运行器临时目录的路径
+      - name: Echo Temporary Directory on the Runner
+        run: echo ${{ runner.temp }}
+
+      - name: Authenticate to Huawei Cloud
+        uses: huaweicloud/auth-action@v1.1.0
+        with: 
+          access_key_id: ${{ secrets.ACCESSKEY }}
+          secret_access_key: ${{ secrets.SECRETACCESSKEY }}
+          region: ${{ env.REGION_ID}}
+ 
+      # 上传文件到华为云OBS
+      - name: Upload to Huawei Cloud OBS
+        uses: huaweicloud/obs-helper@v1.0.0
+        with:
+          bucket_name: 'shp-cn4'
+          local_file_path: |
+              ./code
+          obs_file_path: 'wyh_test/pipeline_cicd_github'
+          operation_type: 'upload'
+          include_self_folder: true
