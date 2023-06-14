@@ -68,7 +68,30 @@ def sync_data(src_path, dst_path=None):
 def train_model():
     args = parse_args()
     local_data_path = sync_data(args.input_path)
-    final_df = pd.read_csv(os.path.join(local_data_path, "final_df.csv"))
+    
+    final_df = pd.DataFrame()
+    for file_name in os.listdir(local_data_path):
+        if file_name.startswith("."):
+            continue
+        file_path = os.path.join(local_data_path, file_name)
+        print(f"file_path is {file_path}")
+        final_df = final_df.append(pd.read_parquet(file_path))
+    # final_df = pd.read_csv(os.path.join(local_data_path, "final_df.csv"))
+    
+#     columns = ['userId',
+#         'movieId',
+#         'rating',
+#         'Movie_names',
+#         'Genres',
+#         'release_year',
+#         'gender',
+#         'age',
+#         'occupation']
+    
+#     # final_df.columns = columns
+    
+    print(final_df)
+    
     user_enc = LabelEncoder()
     final_df['userId'] = user_enc.fit_transform(final_df['userId'])
 
@@ -102,4 +125,6 @@ def train_model():
     sync_data(tmp_output_path, args.output_path)
 
 if __name__ == "__main__":
+    print("Start to train model")
     train_model()
+    print("End train model===")

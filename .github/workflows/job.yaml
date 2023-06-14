@@ -30,9 +30,9 @@ jobs:
       - name: Upload to Huawei Cloud OBS
         uses: huaweicloud/obs-helper@v1.0.0
         with:
-          bucket_name: 'shp-cn4'
+          bucket_name: 'wyh-cicd-dev'
           local_file_path: |
               ./code
-          obs_file_path: 'wyh_test/pipeline_cicd_github'
+          obs_file_path: 'ml-1m/pipeline_cicd_github'
           operation_type: 'upload'
           include_self_folder: true
